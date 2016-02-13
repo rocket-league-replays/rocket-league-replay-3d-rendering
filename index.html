@@ -14,27 +14,10 @@
 
 <body>
   <div id="container"></div>
-  child: <select id="child"><option value="">---------</option></select>
-  <br>
-
-  <div id="controls" style="display: none;">
-  px: <input id="px" step="0.01" min="-3000" max="3000" type="range" value="0">
-  py: <input id="py" step="0.01" min="-3000" max="3000" type="range" value="0">
-  pz: <input id="pz" step="0.01" min="-3000" max="3000" type="range" value="0"><br>
-
-  rx: <input id="rx" step="0.01" min="-180" max="180" type="range" value="0">
-  ry: <input id="ry" step="0.01" min="-45" max="45" type="range" value="0">
-  rz: <input id="rz" step="0.01" min="-45" max="45" type="range" value="0"><br>
-  </div>
-
-  speed: <input id="speed" step="0.1" min="-50" max="50" type="range" value="5">
-  steering: <input id="steering" step="0.1" min="-50" max="50" type="range" value="5"><br>
-
-  <button onclick="addCar()">add car</button>
-  <button onclick="addWheel()">add wheel</button>
+  speed: <input id="speed" step="0.1" min="-50" max="50" type="range" value="5" disabled>
+  steering: <input id="steering" step="0.1" min="-50" max="50" type="range" value="0"><br>
 
   <script src="./assets/js/main.js"></script>
   <script src="./assets/js/objects.js"></script>
-  <script src="./assets/js/tools.js"></script>
 </body>
 </html>

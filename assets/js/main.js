@@ -89,43 +89,37 @@ function animate() {
   controls.update(); // required if controls.enableDamping = true, or if controls.autoRotate = true
   stats.update();
 
-  // console.log('finding car')
-  obj = scene.getObjectByName('car', true);
+  obj = scene.getObjectByName('car-1', true);
 
-  // obj.rotation.x = document.getElementById('x').value * (Math.PI / 180)
-  // obj.rotation.y = document.getElementById('y').value * (Math.PI / 180)
-  // obj.rotation.z = document.getElementById('z').value * (Math.PI / 180)
-  // console.log(document.getElementById('x').value, document.getElementById('y').value, document.getElementById('z').value, obj.rotation)
+  if (obj) {
+    for (var i=0; i<obj.children.length; i++) {
+      child = obj.children[i]
 
-  for (var i=0; i<scene.children.length; i++) {
-    child = scene.children[i]
+      if (child.name.startsWith('wheel-')) {
+        speed = r(document.getElementById('speed').value)
+        steering = r(document.getElementById('steering').value)
 
-    if (child.name.length > 0 && document.querySelectorAll('#child option[value="' + child.name + '"]').length === 0) {
-      var option = document.createElement('option')
-      option.value = child.name
-      option.text = child.name
-
-      document.getElementById('child').add(option)
-    }
-
-    if (child.name.startsWith('wheel-')) {
-      speed = r(document.getElementById('speed').value)
-      steering = r(document.getElementById('steering').value)
-
-      if (d(child.rotation.x) < 180) {
-        child.rotation.z -= speed
-      } else {
-        child.rotation.z += speed
-      }
-
-      if (child.position.x > 0) {
-        if (d(child.rotation.x) < 180) {
-          child.rotation.y = steering
+        if (d(child.rotation.x) >= 0) {
+          child.rotation.z -= speed
         } else {
-          child.rotation.y = -steering
+          child.rotation.z += speed
+        }
+
+        if (child.position.x > 0) {
+          if (d(child.rotation.x) >= 0) {
+            child.rotation.y = steering
+          } else {
+            child.rotation.y = -steering
+          }
         }
       }
     }
+
+    var newX = (1 + Math.sin(new Date().getTime() * .005)) * 500;
+
+    document.getElementById('speed').value = (newX - obj.position.x) / 7
+
+    obj.position.x = newX
   }
 
   render();
