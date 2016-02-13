@@ -65,10 +65,10 @@ function init() {
   // Add lighting.
   light = new THREE.DirectionalLight(0xffffff);
   light.castShadow = true;
-  light.shadowCameraLeft = -5000;
-  light.shadowCameraRight = 5000;
-  light.shadowCameraTop = 5000;
-  light.shadowCameraBottom = -5000;
+  light.shadow.camera.left = -5000;
+  light.shadow.camera.right = 5000;
+  light.shadow.camera.top = 5000;
+  light.shadow.camera.bottom = -5000;
   light.position.set(0, 0, 5000);
   scene.add(light);
 

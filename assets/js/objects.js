@@ -1,6 +1,7 @@
 'use strict'
 
-var loader = new THREE.JSONLoader();
+const loader = new THREE.JSONLoader();
+const textureLoader = new THREE.TextureLoader()
 
 // init loading
 loader.load('./assets/json/stadium.json', function(geometry) {
@@ -29,7 +30,8 @@ var wheelIndex = 0;
 function addCar() {
   loader.load('./assets/json/Body_Backfire_SF.json', function(geometry) {
     var material = new THREE.MeshLambertMaterial({
-      map: THREE.ImageUtils.loadTexture('./assets/img/Body_Octane_Curvature.jpg')
+      map: textureLoader.load('./assets/img/Body_Octane_Curvature.jpg'),
+
     });
 
     const mesh = new THREE.Mesh(geometry, material);
@@ -74,7 +76,7 @@ function addWheel() {
   loader.load('./assets/json/WHEEL_AlphaRim_SF.json', function(geometry) {
     // Add a wheel
     var material = new THREE.MeshLambertMaterial({
-      map: THREE.ImageUtils.loadTexture('./assets/img/AlphaRim_D.png')
+      map: textureLoader.load('./assets/img/AlphaRim_D.png'),
     });
 
     var mesh = new THREE.Mesh(geometry, material);
