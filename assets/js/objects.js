@@ -43,6 +43,13 @@ function addCar() {
     mesh.rotation.x = 90 * (Math.PI / 180)
 
     scene.add(mesh);
+
+    // Add some wheels.
+    addWheel(mesh)
+    addWheel(mesh)
+    addWheel(mesh)
+    addWheel(mesh)
+
   });
 }
 
@@ -56,34 +63,36 @@ function d(r) {
   return r * (180 / Math.PI)
 }
 
-const wheelPositions = [
-  new THREE.Vector3(1127, -400, 400),
-  new THREE.Vector3(-1137, -400, 442),
-  new THREE.Vector3(1127, 1074, 390),
-  new THREE.Vector3(-1137, 1021, 390)
-]
 
+const wheelPositions = [
+  new THREE.Vector3(44.57, 14.75, 18.26),
+  new THREE.Vector3(-44.9, 18, 18.26),
+  new THREE.Vector3(-44.9, 18, -43.15),
+  new THREE.Vector3(44.57, 14.75, -43.15),
+]
 
 const wheelRotations = [
-  new THREE.Euler(r(87.75), r(1.3), r(0)),
-  new THREE.Euler(r(90.95), r(0), r(0)),
-  new THREE.Euler(r(270.25), r(0), r(0)),
-  new THREE.Euler(r(270.25), r(0), r(100))
+  new THREE.Euler(r(0), r(0), r(0)),
+  new THREE.Euler(r(0), r(0), r(0)),
+  new THREE.Euler(r(-180), r(0), r(0)),
+  new THREE.Euler(r(-180), r(0), r(0)),
 ]
 
 
-function addWheel() {
+function addWheel(car) {
   loader.load('./assets/json/WHEEL_AlphaRim_SF.json', function(geometry) {
     // Add a wheel
+
     var material = new THREE.MeshLambertMaterial({
       map: textureLoader.load('./assets/img/AlphaRim_D.png'),
+      transparent: true
     });
 
     var mesh = new THREE.Mesh(geometry, material);
 
     mesh.name = `wheel-${wheelIndex}`
 
-    mesh.scale.set(25, 25, 25);
+    mesh.scale.set(1, 1, 1);
 
     if (wheelPositions.length > wheelIndex) {
       mesh.position.set(
@@ -101,13 +110,9 @@ function addWheel() {
       )
     }
 
-    scene.add(mesh);
+    car.add(mesh);
     wheelIndex += 1
   });
 }
 
 addCar()
-addWheel()
-addWheel()
-addWheel()
-addWheel()
