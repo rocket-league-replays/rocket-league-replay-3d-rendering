@@ -24,7 +24,7 @@ function init() {
   var container = document.getElementById('container');
   container.appendChild(renderer.domElement);
 
-  camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - bottomSpacing), 2000, 10000);
+  camera = new THREE.PerspectiveCamera(60, window.innerWidth / (window.innerHeight - bottomSpacing), 1, 30000);
 
   camera.position.set(5000, -5000, 1000);
 
