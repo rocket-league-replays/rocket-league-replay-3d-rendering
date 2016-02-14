@@ -154,7 +154,7 @@ class Generator(object):
 
                     if state_data:
                         x, y, z = state_data['pos']
-                        pitch, roll, yaw = state_data['rot']
+                        yaw, pitch, roll = state_data['rot']
 
                         result[index] = {
                             'x': x,
