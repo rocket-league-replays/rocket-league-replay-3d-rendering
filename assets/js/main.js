@@ -6,10 +6,8 @@ var camera, controls, scene, renderer;
 var animData;
 var mesh;
 var stats;
-var bottomSpacing = 130;
+var bottomSpacing = 100;
 
-init();
-animate();
 
 function init() {
 
@@ -25,15 +23,12 @@ function init() {
   container.appendChild(renderer.domElement);
 
   camera = new THREE.PerspectiveCamera(60, window.innerWidth / (window.innerHeight - bottomSpacing), 1, 30000);
-
-  camera.position.set(5000, -5000, 1000);
-
+  camera.position.set(-4077, 0, 2027);
   camera.up = new THREE.Vector3(0, 0, 1);
 
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.25;
-  // world
 
   // Add stats module.
   stats = new Stats();
@@ -82,47 +77,49 @@ function init() {
 
   light = new THREE.AmbientLight(0x222222);
   scene.add(light);
+
+  addStadium()
+  animate()
 }
 
 function animate() {
-  requestAnimationFrame(animate);
-  controls.update(); // required if controls.enableDamping = true, or if controls.autoRotate = true
+  if (typeof scene === 'undefined') {
+    return
+  }
+
+  if (controls.enableDamping || controls.autoRotate) {
+    controls.update();
+  }
+
   stats.update();
 
-  obj = scene.getObjectByName('car-1', true);
+  if (typeof currentFrame !== 'undefined' && currentFrame >= 0) {
+    document.getElementById('frame').value = currentFrame
+    document.getElementById('framev').innerHTML = `${currentFrame} - ${parseFloat(frameData[currentFrame].time).toFixed(2)}s`
 
-  if (obj) {
-    for (var i=0; i<obj.children.length; i++) {
-      child = obj.children[i]
+    positionReplayObjects()
 
-      if (child.name.startsWith('wheel-')) {
-        speed = r(document.getElementById('speed').value)
-        steering = r(document.getElementById('steering').value)
-
-        if (d(child.rotation.x) >= 0) {
-          child.rotation.z -= speed
-        } else {
-          child.rotation.z += speed
-        }
-
-        if (child.position.x > 0) {
-          if (d(child.rotation.x) >= 0) {
-            child.rotation.y = steering
-          } else {
-            child.rotation.y = -steering
-          }
-        }
-      }
+    if (currentFrame === maxFrame - 1) {
+      currentFrame = 0
+    } else {
+      currentFrame += 1
     }
 
-    var newX = (1 + Math.sin(new Date().getTime() * .005)) * 500;
+    var target_car = scene.getObjectByName('car-4')
 
-    document.getElementById('speed').value = (newX - obj.position.x) / 7
-
-    obj.position.x = newX
+    if (target_car) {
+      camera.position.x = 0;
+      camera.position.y = -2000;
+      camera.position.z = 1000;
+      camera.lookAt(target_car.position);
+    }
   }
 
   render();
+
+  setTimeout(function() {
+    requestAnimationFrame(animate);
+  }, 1000 / 30) // Cap at 30 FPS.
 }
 
 function render() {
