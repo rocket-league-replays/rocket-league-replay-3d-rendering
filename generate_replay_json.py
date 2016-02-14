@@ -153,20 +153,3 @@ class Generator(object):
 
 if __name__ == '__main__':
     Generator()
-"""
-for frame in replay.netstream:
-    actors = replay.netstream[frame].actors
-
-    for actor in actors:
-        # if actors[actor]['actor_type'] == 'TAGame.Default__PRI_TA' and 'Engine.PlayerReplicationInfo:PlayerID' in actors[actor]['data']:
-        # pprint(actors[actor])
-        pass
-    # break
-
-# pprint(replay.netstream[100])
-# pprint(replay.netstream[100].actors)
-# pprint(replay.netstream[100].current)
-# pprint(replay.netstream[100].delta)
-# pprint(replay.netstream[100].parse_frame)
-# exit()
-"""
