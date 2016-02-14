@@ -28,10 +28,10 @@ class Generator(object):
             self.players[player]['position_data'] = self.get_player_position_data(player)
 
         # Restructure the data so that it's chunkable.
-        frame_data = {}
+        frame_data = []
 
         for frame in range(self.replay.header['NumFrames']):
-            frame_data[frame] = {
+            frame_dict = {
                 'time': self.replay.netstream[frame].current,
                 'actors': []
             }
@@ -40,12 +40,29 @@ class Generator(object):
                 position_data = self.players[player]['position_data']
 
                 if frame in position_data:
-                    frame_data[frame]['actors'].append({
+                    frame_dict['actors'].append({
                         'id': player,
+                        'type': 'car',
                         **position_data[frame]
                     })
 
-        json.dump(frame_data, open(file_path + '.json', 'w'))
+            frame_data.append(frame_dict)
+
+        assert len(frame_data) == self.replay.header['NumFrames'], "Missing {} frames from data output.".format(
+            self.replay.header['NumFrames'] - len(frame_data)
+        )
+
+        # Get min and max z values.
+        for axis in ['x', 'y', 'z']:
+            values = [
+                actor[axis]
+                for frame in frame_data
+                for actor in frame['actors']
+            ]
+
+            print(axis, min(values), max(values))
+
+        json.dump(frame_data, open(file_path + '.json', 'w'), indent=2)
 
     def get_players(self):
         players = {}
