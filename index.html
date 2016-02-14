@@ -14,10 +14,26 @@
 
 <body>
   <div id="container"></div>
-  speed: <input id="speed" step="0.1" min="-50" max="50" type="range" value="5" disabled>
-  steering: <input id="steering" step="0.1" min="-50" max="50" type="range" value="0"><br>
 
+  <div id="dreplay" style="padding-top: 30px;">
+    replay: <select id="replay"></select> <button onclick="loadGameData()">load</button><br>
+  </div>
+
+<div id="dframe" style="display: none;">
+  frame:<br>
+  <input id="frame" step="1" min="0" max="1" type="range" value="0" disabled><br>
+  <span id="framev"></span>
+</div>
+
+  <script src="./assets/js/utils.js"></script>
   <script src="./assets/js/main.js"></script>
   <script src="./assets/js/objects.js"></script>
+  <script src="./assets/js/replay.js"></script>
+
+  <style>
+  input {
+    width: 60%;
+  }
+  </style>
 </body>
 </html>
