@@ -4,6 +4,7 @@ let currentFrame = -1
 let maxFrame = -1
 let frameData = {}
 let carsLoading = []
+let carsLoaded = []
 
 const replays = [
   'BB773F5D4FA75E15111BC6BAFD92A982',

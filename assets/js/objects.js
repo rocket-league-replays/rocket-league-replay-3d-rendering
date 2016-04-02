@@ -145,6 +145,7 @@ function addCar(name, actor) {
 
     console.log(`[${name}] Render complete`)
     carsLoading = carsLoading.filter(function(e){ return e !== name })
+    carsLoaded.push(name);
   }
 
   if ( ! carMesh) {

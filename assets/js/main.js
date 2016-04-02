@@ -1,16 +1,15 @@
 if (!Detector.webgl) Detector.addGetWebGLMessage();
 var clock = new THREE.Clock();
+const cameraType = 'Player'; // or 'Orbit'
 
-var camera, controls, scene, renderer;
+var camera, controls, scene, renderer, playerCam;
 
 var animData;
 var mesh;
 var stats;
 var bottomSpacing = 100;
 
-
 function init() {
-
   scene = new THREE.Scene();
 
   renderer = new THREE.WebGLRenderer();
@@ -26,9 +25,14 @@ function init() {
   camera.position.set(-4077, 0, 2027);
   camera.up = new THREE.Vector3(0, 0, 1);
 
-  controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.25;
+
+  if (cameraType == 'Orbit') {
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.25;
+  } else if (cameraType == 'Player') {
+    playerCam = new PlayerCam(camera);
+  }
 
   // Add stats module.
   stats = new Stats();
@@ -87,8 +91,10 @@ function animate() {
     return
   }
 
-  if (controls.enableDamping || controls.autoRotate) {
-    controls.update();
+  if (cameraType == 'Orbit') {
+    if (controls.enableDamping || controls.autoRotate) {
+      controls.update();
+    }
   }
 
   stats.update();
@@ -105,13 +111,18 @@ function animate() {
       currentFrame += 1
     }
 
-    var target_car = scene.getObjectByName('car-4')
+    if (cameraType == 'Orbit') {
+      var target_car = scene.getObjectByName('car-4')
 
-    if (target_car) {
-      camera.position.x = 0;
-      camera.position.y = -2000;
-      camera.position.z = 1000;
-      camera.lookAt(target_car.position);
+      if (target_car) {
+        camera.position.x = 0;
+        camera.position.y = -2000;
+        camera.position.z = 1000;
+        camera.lookAt(target_car.position);
+      }
+    } else if (cameraType == 'Player') {
+      playerCam.update();
+      document.getElementById('playerName').innerText = playerCam.getPlayerName() || "Loading...";
     }
   }
 
@@ -125,3 +136,9 @@ function animate() {
 function render() {
   renderer.render(scene, camera);
 }
+
+document.body.addEventListener('keypress', function(e) {
+  if (playerCam) {
+    playerCam.maybeHandleKey(e.which);
+  }
+});
