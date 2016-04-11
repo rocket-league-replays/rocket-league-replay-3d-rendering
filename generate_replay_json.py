@@ -22,6 +22,7 @@ class Generator(object):
             pickle.dump(self.replay, open(file_path + '.pickle', 'wb'))
 
         self.players = self.get_players()
+        self.ballData = self.get_ball_data()
 
         for player in self.players:
             # Get their position data.
@@ -44,6 +45,13 @@ class Generator(object):
                         'id': player,
                         'type': 'car',
                         **position_data[frame]
+                    })
+
+            if frame in self.ballData:
+                frame_dict['actors'].append({
+                        'id': 'ball',
+                        'type': 'ball',
+                        **self.ballData[frame]
                     })
 
             frame_data.append(frame_dict)
@@ -98,7 +106,6 @@ class Generator(object):
                  'new': False,
                  'startpos': 102988}
                  """
-
                 if 'Engine.PlayerReplicationInfo:PlayerName' not in value['data']:
                     continue
 
@@ -166,6 +173,36 @@ class Generator(object):
                         }
 
         return result
+
+    def get_ball_data(self):
+        result = {}
+        for index, frame in self.replay.netstream.items():
+            for actor in frame.actors:
+                actor_obj = frame.actors[actor]
+
+                if 'data' not in actor_obj:
+                    continue
+                if 'TAGame.RBActor_TA:ReplicatedRBState' not in actor_obj['data']:
+                    continue
+                if actor_obj['actor_type'] != 'Archetypes.Ball.Ball_Default':
+                    continue
+
+                # print(actor_obj['actor_id'])
+
+                state_data = actor_obj['data']['TAGame.RBActor_TA:ReplicatedRBState']
+
+                x, y, z = state_data['pos']
+                yaw, pitch, roll = state_data['rot']
+
+                result[index] = {
+                    'x': x,
+                    'y': y,
+                    'z': z,
+                    'pitch': pitch,
+                    'roll': roll,
+                    'yaw': yaw
+                }
+        return result            
 
 
 if __name__ == '__main__':

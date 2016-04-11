@@ -3,8 +3,8 @@
 const loader = new THREE.JSONLoader();
 const textureLoader = new THREE.TextureLoader()
 
-const D_RIGHT = new THREE.Vector3( 0, 0, 1 );
-const D_UP = new THREE.Vector3( 0, 1, 0 );
+const D_UP = new THREE.Vector3( 0, 0, 1 );
+const D_RIGHT = new THREE.Vector3( 0, 1, 0 );
 const D_FORWARD = new THREE.Vector3( 1, 0, 0 );
 
 

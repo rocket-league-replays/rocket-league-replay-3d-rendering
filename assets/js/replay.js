@@ -44,35 +44,53 @@ function positionReplayObjects() {
 
   frameData[currentFrame].actors.forEach(function(actor, index) {
     // Does this car already exist in the scene.
-    const objectName = `car-${actor.id}`
-    const carObject = scene.getObjectByName(objectName)
+    if (actor.type == 'car') {
+      const objectName = `car-${actor.id}`
+      const carObject = scene.getObjectByName(objectName)
 
-    if (carObject === undefined) {
-      // Add the car.
-      if (carsLoading.indexOf(objectName) === -1) {
-        carsLoading.push(objectName)
+      if (carObject === undefined) {
+        // Add the car.
+        if (carsLoading.indexOf(objectName) === -1) {
+          carsLoading.push(objectName)
 
-        console.log(`[${objectName}] Calling addCar`)
-        addCar(objectName, actor)
+          console.log(`[${objectName}] Calling addCar`)
+          addCar(objectName, actor)
+        }
+      } else {
+        // Reposition the car based on the latest data.
+        if (actor.z < 0) {
+          console.error('Z value below 0 at frame', currentFrame)
+        }
+
+        carObject.position.set(
+          actor.x * -1,
+          actor.y,
+          actor.z
+        )
+
+        // PITCH SHOULD ALWAYS BE SECOND
+        carObject.rotation.set(
+          r(-90) + (actor.roll  * Math.PI * -1),
+          r(0)   + (actor.pitch * Math.PI * -1),
+          r(180) + (actor.yaw   * Math.PI * 1)
+        )
       }
+    } else if (actor.type == 'ball') {
+      const ballObject = scene.getObjectByName('ball');
+      if (ballObject === undefined) {
+        console.log("Adding the ball");
+        addBall(actor);
+      } else {
+        ballObject.position.set(
+          actor.x * -1,
+          actor.y,
+          actor.z
+        );
+        // TODO: Rotate ball if it is textured.
+      }
+
     } else {
-      // Reposition the car based on the latest data.
-      if (actor.z < 0) {
-        console.error('Z value below 0 at frame', currentFrame)
-      }
-
-      carObject.position.set(
-        actor.x * -1,
-        actor.y,
-        actor.z
-      )
-
-      // PITCH SHOULD ALWAYS BE SECOND
-      carObject.rotation.set(
-        r(-90) + (actor.roll  * Math.PI * -1),
-        r(0)   + (actor.pitch * Math.PI * -1),
-        r(180) + (actor.yaw   * Math.PI * -1)
-      )
+      console.log("Unknown type: " + actor.type);
     }
   });
 }

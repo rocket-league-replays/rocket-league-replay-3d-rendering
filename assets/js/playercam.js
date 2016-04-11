@@ -2,13 +2,19 @@
 
 const CAMERA_HEIGHT = 90;
 const CAMERA_DISTANCE = 200;
-const FOCUS_DISTANCE_UP = 30;
-const FOCUS_DISTANCE_FORWARD = 30;
+const FOCUS_DISTANCE_UP = 70;
+const FOCUS_DISTANCE_FORWARD = 50;
 
 // Wrap camera with logic to follow a player.
 function PlayerCam(threeCamera) {
   this.camera = threeCamera;
   this.playerIndex = 0;
+  this.ballCam = true;
+};
+
+// Change whether using ball or forwards cam.
+PlayerCam.prototype.toggleBallCam = function() {
+  this.ballCam = !this.ballCam;
 };
 
 // Return the name of the currently focussed player.
@@ -35,10 +41,12 @@ PlayerCam.prototype.rotatePlayer = function(delta) {
 // Handles input from the user, returning true if anything was changed.
 PlayerCam.prototype.maybeHandleKey = function(which) {
   switch (which) {
-    case 106: // J = previous car
+    case 106: // j = previous car
       this.rotatePlayer(-1); return true;
-    case 107: // K = next car
+    case 107: // k = next car
       this.rotatePlayer( 1); return true;
+    case 98:  // b = toggle ball cam.
+      this.toggleBallCam(); return true;
   }
   return false;
 };
@@ -49,17 +57,36 @@ PlayerCam.prototype.update = function() {
   var targetCar = targetName && scene.getObjectByName(targetName);
   if (!targetCar) return;
 
-  var carRight = relativeDirection(targetCar, D_RIGHT);
-  var carUp = relativeDirection(targetCar, D_UP);
-  var carForward = relativeDirection(targetCar, D_FORWARD);
+  var cameraSpot, cameraLook;
 
-  var cameraSpot = targetCar.position.clone()
-      .addScaledVector(carUp, CAMERA_HEIGHT)
-      .addScaledVector(carForward, -CAMERA_DISTANCE)
+  if (this.ballCam) {
+    // BALL CAM
+    var ballObject = scene.getObjectByName('ball');
+    if (!ballObject) return;
 
-  var cameraLook = targetCar.position.clone()
-      .addScaledVector(carUp, FOCUS_DISTANCE_UP)
-      .addScaledVector(carForward, FOCUS_DISTANCE_FORWARD)
+    var ballPos = ballObject.position.clone();
+    var carPos = targetCar.position.clone();
+
+    // carPos + dist * norm(carPos - ballPos) + height * UP
+    var ballToCar = carPos.clone().sub(ballPos).normalize();
+    cameraSpot = carPos
+        .addScaledVector(ballToCar, CAMERA_DISTANCE)
+        .addScaledVector(D_UP, CAMERA_HEIGHT);
+
+    cameraLook = ballPos;
+  } else {
+    // PLAYER CAM
+    var carRight = relativeDirection(targetCar, D_RIGHT);
+    var carUp = relativeDirection(targetCar, D_UP);
+    var carForward = relativeDirection(targetCar, D_FORWARD);
+    cameraSpot = targetCar.position.clone()
+        .addScaledVector(carRight, 1.2 * CAMERA_HEIGHT) // HACK - right, instead of up?
+        .addScaledVector(carForward, -CAMERA_DISTANCE)
+    cameraLook = targetCar.position.clone()
+        .addScaledVector(carRight, FOCUS_DISTANCE_UP)
+        .addScaledVector(carForward, -FOCUS_DISTANCE_FORWARD)
+  }
+  
 
   camera.position.copy(cameraSpot);
   camera.lookAt(cameraLook);

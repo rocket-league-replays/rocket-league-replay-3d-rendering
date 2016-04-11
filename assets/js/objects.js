@@ -138,10 +138,11 @@ function addCar(name, actor) {
     mesh.rotation.set(
       (actor.roll * Math.PI * - 1) + r(-90),
       actor.pitch * Math.PI * -1,
-      (actor.yaw * Math.PI * - 1) + r(180)
+      (actor.yaw * Math.PI * 1) + r(180)
     )
 
     // XYZ XZY YXZ YZX ZXY ZYX
+    mesh.rotation.order = "XYZ";
 
     console.log(`[${name}] Render complete`)
     carsLoading = carsLoading.filter(function(e){ return e !== name })
@@ -198,4 +199,23 @@ function addWheel(car, wheelIndex) {
   } else {
     renderWheel(wheelMesh)
   }
+}
+
+function addBall(ball) {
+    const geometry = new THREE.SphereGeometry(100, 32, 32);
+    const material = new THREE.MeshPhongMaterial({
+      color: 0x383838,
+      emissive: 0x000000,
+      specular: 0xffffff,
+      shading: THREE.FlatShading
+    });
+
+    var mesh = new THREE.Mesh(geometry, material);
+    mesh.name = 'ball';
+    mesh.matrixAutoUpdate = true;
+    mesh.position.set(ball.x, ball.y, ball.z);
+
+    const scale = 1.15
+    mesh.scale.set(scale, scale, scale);
+    scene.add(mesh);
 }
